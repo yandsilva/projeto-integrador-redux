@@ -1,15 +1,27 @@
+import { MoveLeft } from "lucide-react";
+import banner_account from "../assets/banner_account.jpg";
 import { FcGoogle } from "react-icons/fc";
 import { Link, useNavigate } from "react-router-dom";
-import banner_account from "../assets/banner_account.jpg";
-import { MoveLeft } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useDispatch, useSelector } from "react-redux";
+import { useEffect } from "react";
+import { toast } from "react-toastify";
+import { clearAllUserErrors } from "../store/slice/userSlice";
+import { createAccount } from "../store/slice/userSlice";
 
-const schema = z.object({
-  email: z.string().min(1, "Informe um email válido!"),
-  password: z.string().min(6, "A senha precisa ter pelo menos 6 caracteres"),
-});
+const schema = z
+  .object({
+    name: z.string().min(1, "Informe um nome completo"),
+    email: z.string().min(1, "Informe um email válido!"),
+    password: z.string().min(6, "A senha precisa ter pelo menos 6 caracteres"),
+    confirmPassword: z.string(),
+  })
+  .refine((fields) => fields.password === fields.confirmPassword, {
+    path: ["confirmPassword"],
+    message: "As senhas precisam ser iguais",
+  });
 
 export default function Signup() {
   const {
@@ -20,29 +32,46 @@ export default function Signup() {
     mode: "all",
     resolver: zodResolver(schema),
     defaultValues: {
+      name: "Yan",
       email: "yan@gmail.com",
       password: "12345678",
+      confirmPassword: "12345678",
     },
   });
+  const { loading, error, isAuthenticated } = useSelector(
+    (state) => state.user
+  );
 
+  const dispatch = useDispatch();
   const navigateTo = useNavigate();
 
-  const handleLogin = (data) => {
-    console.log(data);
+  const hadleSubmitData = (data) => {
+    dispatch(createAccount(data.name, data.email, data.password));
   };
+
+  useEffect(() => {
+    if (error) {
+      toast.error(error);
+      dispatch(clearAllUserErrors());
+    }
+    if (isAuthenticated) {
+      navigateTo("/");
+      console.log(isAuthenticated);
+    }
+  }, [error, isAuthenticated, dispatch, loading]);
 
   return (
     <>
       <div className="flex text-white bg-[#101014] h-screen">
         {/* IMAGEM */}
-        <div className="lg:flex flex-1 items-center justify-center hidden ">
+        <div className="flex flex-1 items-center justify-center ">
           <img src={banner_account} alt="" />
         </div>
 
         {/* FORMULARIO */}
         <form
-          onSubmit={handleSubmit(handleLogin)}
-          className="flex flex-col flex-1 items-center justify-center relative rounded-3xl border border-gray-500 bg-[#202025] mx-10 sm:mx-32 lg:mx-4 my-10"
+          onSubmit={handleSubmit(hadleSubmitData)}
+          className="flex flex-col flex-1 items-center relative justify-center rounded-3xl border border-gray-500 bg-[#202025] mx-4 my-10"
         >
           <a
             href="/"
@@ -52,9 +81,20 @@ export default function Signup() {
             <p>Inicio</p>
           </a>
           <div className="flex flex-col gap-2 mb-7">
-            <h2 className="text-5xl">Entrar</h2>
+            <h2 className="text-5xl">Criar Conta</h2>
           </div>
           <div className="flex flex-col gap-3 w-[65%]">
+            <div className="flex flex-col">
+              <label className="text-gray-300 mb-1">Nome Completo</label>
+              <input
+                {...register("name")}
+                className="p-3 h-12 rounded-md border border-gray-500 bg-[#242428]"
+                type="text"
+              />
+              {errors.name?.message && (
+                <p className="text-red-500">{errors.name.message}</p>
+              )}
+            </div>
             <div className="flex flex-col">
               <label className="text-gray-300 mb-1">Endereço de E-mail</label>
               <input
@@ -77,18 +117,31 @@ export default function Signup() {
                 <p className="text-red-500">{errors.password.message}</p>
               )}
             </div>
-            <Link
-              to="/password/forgot"
-              className="text-blue-400 mb-3 underline text-end"
-            >
-              Esqueceu sua senha?
-            </Link>
+            <div className="flex flex-col">
+              <label className="text-gray-300 mb-1">Confirmar a Senha</label>
+              <input
+                {...register("confirmPassword")}
+                className="p-3 h-12 rounded-md border border-gray-500 bg-[#242428]"
+                type="password"
+              />
+              {errors.confirmPassword?.message && (
+                <p className="text-red-500">{errors.confirmPassword.message}</p>
+              )}
+            </div>
+            <div className="flex gap-2">
+              <input type="checkbox" required />
+              <p className="text-gray-400 text-sm">
+                Você Concorda com os{" "}
+                <a className="text-white" href="#">
+                  Termos & Condições?
+                </a>
+              </p>
+            </div>
             <button
-              onClick={handleSubmit(handleLogin)}
-              // disabled={isSubmitting || loading}
-              className="bg-[#26bbff] h-12 rounded-md text-black font-medium hover:bg-[#61ccff] transition"
+              disabled={isSubmitting}
+              className="bg-[#26bbff] mt-6 h-12 rounded-md text-black font-medium hover:bg-[#61ccff] transition"
             >
-              {isSubmitting ? "Enviando..." : "Entrar"}
+              {isSubmitting ? "Aguarde..." : "Criar Conta"}
             </button>
 
             <div className="flex items-center justify-center">
@@ -103,11 +156,8 @@ export default function Signup() {
               <div className="text-white ">Google</div>
             </button>
           </div>
-          <Link
-            className="text-blue-400 mb-3 underline mt-10"
-            to="/createAccount"
-          >
-            Criar Conta
+          <Link className="text-blue-400 mb-3 underline mt-10" to="/login">
+            Logar
           </Link>
         </form>
       </div>

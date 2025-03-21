@@ -31,6 +31,25 @@ const userSlice = createSlice({
       state.error = action.payload;
     },
 
+    registerRequest(state, action) {
+      state.loading = true;
+      state.isAuthenticated = false;
+      state.user = {};
+      state.error = null;
+    },
+    registerSuccess(state, action) {
+      state.loading = false;
+      state.isAuthenticated = true;
+      state.user = action.payload;
+      state.error = null;
+    },
+    registerFailed(state, action) {
+      state.loading = false;
+      state.isAuthenticated = false;
+      state.user = {};
+      state.error = action.payload;
+    },
+
     logoutRequest(state, action) {
       state.loading = false;
       state.isAuthenticated = false;
@@ -126,7 +145,7 @@ export const login = (email, password) => async (dispatch) => {
   dispatch(userSlice.actions.loginRequest());
   try {
     const { data } = await axios.post(
-      "http://localhost:8000/api/v1/user/signup",
+      "http://localhost:8000/api/v1/user/login",
       { email, password },
       {
         withCredentials: true,
@@ -139,6 +158,26 @@ export const login = (email, password) => async (dispatch) => {
     dispatch(userSlice.actions.clearAllErrors());
   } catch (error) {
     dispatch(userSlice.actions.loginFailed(error.response.data.message));
+  }
+};
+
+export const createAccount = (name, email, password) => async (dispatch) => {
+  dispatch(userSlice.actions.registerRequest());
+  try {
+    const { data } = await axios.post(
+      "http://localhost:8000/api/v1/user/signup",
+      { name, email, password },
+      {
+        withCredentials: true,
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    dispatch(userSlice.actions.registerSuccess(data.user));
+    dispatch(userSlice.actions.clearAllErrors());
+  } catch (error) {
+    dispatch(userSlice.actions.registerFailed(error.response.data.message));
   }
 };
 

@@ -5,8 +5,11 @@ import { MoveLeft } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { login } from "@/store/slice/userSlice";
+import { useEffect } from "react";
+import { toast } from "react-toastify";
+import { clearAllUserErrors } from "@/store/slice/userSlice";
 
 const schema = z.object({
   email: z.string().min(1, "Informe um email válido!"),
@@ -26,6 +29,9 @@ export default function Login() {
       password: "12345678",
     },
   });
+  const { loading, error, isAuthenticated } = useSelector(
+    (state) => state.user
+  );
 
   const dispatch = useDispatch();
 
@@ -35,6 +41,16 @@ export default function Login() {
     dispatch(login(data.email, data.password));
     console.log(data);
   };
+
+  useEffect(() => {
+    if (error) {
+      toast.error(error);
+      dispatch(clearAllUserErrors());
+    }
+    if (isAuthenticated) {
+      navigateTo("/");
+    }
+  }, [error, isAuthenticated, dispatch, loading]);
 
   return (
     <>
@@ -89,7 +105,6 @@ export default function Login() {
               Esqueceu sua senha?
             </Link>
             <button
-              onClick={handleSubmit(handleLogin)}
               // disabled={isSubmitting || loading}
               className="bg-[#26bbff] h-12 rounded-md text-black font-medium hover:bg-[#61ccff] transition"
             >
@@ -108,10 +123,7 @@ export default function Login() {
               <div className="text-white ">Google</div>
             </button>
           </div>
-          <Link
-            className="text-blue-400 mb-3 underline mt-10"
-            to="/createAccount"
-          >
+          <Link className="text-blue-400 mb-3 underline mt-10" to="/signup">
             Criar Conta
           </Link>
         </form>
