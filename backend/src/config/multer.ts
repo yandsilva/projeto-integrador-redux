@@ -2,7 +2,7 @@ import multer, { Options } from "multer";
 import path from "path";
 
 export default {
-  Storage: multer.diskStorage({
+  storage: multer.diskStorage({
     destination: path.join(__dirname, "..", "uploads"),
     filename: (req, file, cb) => {
       cb(null, `${Date.now()}_${file.originalname}`);
