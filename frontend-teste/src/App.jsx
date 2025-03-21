@@ -7,12 +7,14 @@ import { useDispatch } from "react-redux";
 import { useEffect } from "react";
 import { getUser } from "./store/slice/userSlice";
 import Account from "./pages/Account";
+import { getAllAddress } from "./store/slice/addressSlice";
 
 function App() {
   const dispatch = useDispatch();
 
   useEffect(() => {
     dispatch(getUser());
+    dispatch(getAllAddress());
   }, []);
   return (
     <>

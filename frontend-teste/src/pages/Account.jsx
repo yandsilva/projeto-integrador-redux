@@ -4,7 +4,7 @@ import { useState } from "react";
 import Dashboard from "@/components/Dashboard";
 import EditData from "@/components/EditData";
 import Orders from "@/components/Orders";
-import Address from "@/components/Address";
+import AddressDisplay from "@/components/AddressDisplay";
 import Favorites from "@/components/Favorites";
 
 export default function Account() {
@@ -86,7 +86,7 @@ export default function Account() {
           case "Meus Pedidos":
             return <Orders />;
           case "Endereço":
-            return <Address />;
+            return <AddressDisplay />;
           case "Favorito":
             return <Favorites />;
           default:
