@@ -9,7 +9,7 @@ const addressSlice = createSlice({
     error: null,
     message: null,
   },
-  reducer: {
+  reducers: {
     getAllAddressRequest(state, action) {
       state.address = [];
       state.error = null;
@@ -76,10 +76,9 @@ export const getAllAddress = () => async (dispatch) => {
   try {
     const { data } = await axios.get(
       "http://localhost:8000/api/v1/address/getAddress",
-      {
-        withCredentials: true,
-      }
+      { withCredentials: true }
     );
+
     dispatch(addressSlice.actions.getAllAddressSuccess(data.address));
     dispatch(addressSlice.actions.clearAllErrors());
   } catch (error) {
@@ -98,7 +97,7 @@ export const addNewAddress = (data) => async (dispatch) => {
       {
         withCredentials: true,
         headers: {
-          "Content-Type": "multipart/form-data",
+          "Content-Type": "application/json",
         },
       }
     );
@@ -127,6 +126,14 @@ export const deleteAddress = (id) => async (dispatch) => {
       addressSlice.actions.deleteAddressFailed(error.response.data.message)
     );
   }
+};
+
+export const clearAllAddressSliceErrors = () => async (dispatch) => {
+  dispatch(addressSlice.actions.clearAllErrors());
+};
+
+export const resetAddressSlice = () => async (dispatch) => {
+  dispatch(addressSlice.actions.resetAddressSlice());
 };
 
 export default addressSlice.reducer;

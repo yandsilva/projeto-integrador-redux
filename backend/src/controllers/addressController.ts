@@ -60,15 +60,7 @@ export const searchAddress = async (
   res: Response
 ): Promise<any> => {
   try {
-    const { zip } = req.body;
     const userId = req.user.id;
-
-    if (!zip) {
-      return res.status(400).json({
-        success: false,
-        message: "O CEP é obrigatório.",
-      });
-    }
 
     if (!userId) {
       return res.status(401).json({
@@ -77,9 +69,8 @@ export const searchAddress = async (
       });
     }
 
-    const address = await prismaClient.address.findFirst({
+    const address = await prismaClient.address.findMany({
       where: {
-        zip,
         userId,
       },
     });

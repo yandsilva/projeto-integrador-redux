@@ -187,6 +187,7 @@ export const getUser = () => async (dispatch) => {
     const { data } = await axios.get("http://localhost:8000/api/v1/user/me", {
       withCredentials: true,
     });
+
     dispatch(userSlice.actions.loadUserSuccess(data.user));
     dispatch(userSlice.actions.clearAllErrors());
   } catch (error) {
