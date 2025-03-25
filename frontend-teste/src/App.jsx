@@ -8,6 +8,8 @@ import { useEffect } from "react";
 import { getUser } from "./store/slice/userSlice";
 import Account from "./pages/Account";
 import { getAllAddress } from "./store/slice/addressSlice";
+import { getAllProduct } from "./store/slice/productSlice";
+import AdminPage from "./pages/AdminPage";
 
 function App() {
   const dispatch = useDispatch();
@@ -15,6 +17,7 @@ function App() {
   useEffect(() => {
     dispatch(getUser());
     dispatch(getAllAddress());
+    dispatch(getAllProduct());
   }, []);
   return (
     <>
@@ -23,6 +26,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/account" element={<Account />} />
+        <Route path="/admin" element={<AdminPage />} />
       </Routes>
       <ToastContainer position="bottom-right" theme="dark" />
     </>
