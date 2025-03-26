@@ -6,6 +6,7 @@ import userRouter from "./routes/userRoute";
 import addressRoute from "./routes/addressRoute";
 import productRouter from "./routes/productRoute";
 import path from "path";
+import categoryRouter from "./routes/categoryRoute";
 
 const app = express();
 dotenv.config({ path: ".env" });
@@ -25,6 +26,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/api/v1/user", userRouter);
 app.use("/api/v1/address", addressRoute);
 app.use("/api/v1/product", productRouter);
+app.use("/api/v1/catergory", categoryRouter);
 app.use("/images", express.static(path.join(__dirname, "uploads")));
 
 export default app;

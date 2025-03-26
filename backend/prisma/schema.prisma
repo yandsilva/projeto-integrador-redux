@@ -47,16 +47,16 @@ model Address {
 }
 
 model Product {
-  id          String    @id @default(uuid())
+  id          String   @id @default(uuid())
   name        String
   description String
   mark        String
   price       String
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
   images      Image[]
-  Category    Category? @relation(fields: [categoryId], references: [id])
-  categoryId  String?
+  category    Category @relation(fields: [categoryId], references: [id])
+  categoryId  String
 
   @@map("products")
 }

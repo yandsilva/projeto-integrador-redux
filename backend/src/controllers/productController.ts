@@ -18,14 +18,13 @@ export const addNewProduct = async (
       path: file.filename,
     }));
 
-    console.log(images);
-
     const product = await prismaClient.product.create({
       data: {
         name,
         description,
         mark,
         price,
+        categoryId,
         images: {
           create: images,
         },
@@ -96,4 +95,81 @@ export const deleteProduct = async (
       product,
     });
   } catch (error) {}
+};
+
+// CATEGORIES
+export const addNewCategory = async (
+  req: Request,
+  res: Response
+): Promise<any> => {
+  try {
+    const { name } = req.body;
+
+    const veryfyCategory = await prismaClient.category.findFirst({
+      where: {
+        name,
+      },
+    });
+
+    if (veryfyCategory) {
+      return res.status(400).json({
+        success: false,
+        message: "Category already exists",
+      });
+    }
+
+    if (!name) {
+      return res.status(400).json({
+        success: false,
+        message: "Name is required",
+      });
+    }
+
+    const category = await prismaClient.category.create({
+      data: {
+        name,
+      },
+    });
+
+    if (!category) {
+      return res.status(404).json({
+        success: false,
+        message: "Category not found",
+      });
+    }
+    return res.status(200).json({
+      success: true,
+      message: "Category created successfully",
+      category,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+};
+export const getAllCategory = async (
+  req: Request,
+  res: Response
+): Promise<any> => {
+  try {
+    const categories = await prismaClient.category.findMany();
+    if (!categories) {
+      return res.status(404).json({
+        success: false,
+        message: "Categories not found",
+      });
+    }
+    return res.status(200).json({
+      success: true,
+      message: "Categories fetched successfully",
+      categories,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
 };

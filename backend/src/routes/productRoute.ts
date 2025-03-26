@@ -12,6 +12,7 @@ const uploads = multer(uploadsConfig);
 
 const productRouter = Router();
 
+// PRODUCTS
 productRouter.post(
   "/add",
   authenticated,
