@@ -1,23 +1,39 @@
 import { Request, Response } from "express";
 import prismaClient from "../prisma";
+import { ICategoryCreate, IProductCreate } from "../types/product.interface";
 
 export const addNewProduct = async (
   req: Request,
   res: Response
 ): Promise<any> => {
   try {
-    const { name, price, mark, description } = req.body;
+    const { name, price, mark, description, categoryId } =
+      req.body as IProductCreate;
     const files = req.files as Express.Multer.File[];
+
     if (!files || files.length === 0) {
       return res
         .status(400)
         .json({ success: false, message: "Imagem obrigatória" });
     }
 
-    const images = files.map((file) => ({
-      path: file.filename,
-    }));
+    if (!categoryId) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Categoria é obrigatória" });
+    }
 
+    const categoryExists = await prismaClient.category.findUnique({
+      where: { id: categoryId },
+    });
+
+    if (!categoryExists) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Categoria não encontrada" });
+    }
+
+    // Cria o produto com a categoria
     const product = await prismaClient.product.create({
       data: {
         name,
@@ -26,20 +42,25 @@ export const addNewProduct = async (
         price,
         categoryId,
         images: {
-          create: images,
+          create: files.map((file) => ({ path: file.filename })),
         },
       },
+      include: {
+        images: true,
+        category: true,
+      },
     });
+
     return res.status(201).json({
       success: true,
-      message: "Product created successfully",
-      address: product,
+      message: "Produto criado com sucesso",
+      product,
     });
   } catch (error) {
     console.log("Error in createProduct controller", error.message);
     return res.status(500).json({
       success: false,
-      message: "Internal server error",
+      message: "Erro interno do servidor",
     });
   }
 };
@@ -94,7 +115,13 @@ export const deleteProduct = async (
       message: "Product deleted successfully",
       product,
     });
-  } catch (error) {}
+  } catch (error) {
+    console.log("Error in deleteProduct controller", error.message);
+    return res.status(500).json({
+      success: false,
+      message: "Erro interno do servidor",
+    });
+  }
 };
 
 // CATEGORIES
@@ -103,53 +130,44 @@ export const addNewCategory = async (
   res: Response
 ): Promise<any> => {
   try {
-    const { name } = req.body;
-
-    const veryfyCategory = await prismaClient.category.findFirst({
-      where: {
-        name,
-      },
-    });
-
-    if (veryfyCategory) {
-      return res.status(400).json({
-        success: false,
-        message: "Category already exists",
-      });
-    }
+    const { name } = req.body as ICategoryCreate;
 
     if (!name) {
       return res.status(400).json({
         success: false,
-        message: "Name is required",
+        message: "Nome é obrigatório",
+      });
+    }
+
+    const existingCategory = await prismaClient.category.findFirst({
+      where: { name },
+    });
+
+    if (existingCategory) {
+      return res.status(409).json({
+        success: false,
+        message: "Categoria já existe",
       });
     }
 
     const category = await prismaClient.category.create({
-      data: {
-        name,
-      },
+      data: { name },
     });
 
-    if (!category) {
-      return res.status(404).json({
-        success: false,
-        message: "Category not found",
-      });
-    }
-    return res.status(200).json({
+    return res.status(201).json({
       success: true,
-      message: "Category created successfully",
+      message: "Categoria criada com sucesso",
       category,
     });
   } catch (error) {
+    console.error("Error in addNewCategory:", error);
     return res.status(500).json({
       success: false,
-      message: "Internal server error",
+      message: "Erro interno do servidor",
     });
   }
 };
-export const getAllCategory = async (
+export const getAllCategories = async (
   req: Request,
   res: Response
 ): Promise<any> => {

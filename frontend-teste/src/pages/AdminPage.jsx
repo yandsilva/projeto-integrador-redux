@@ -2,6 +2,9 @@ import Navbar from "@/components/Navbar";
 import { CircleUserRound } from "lucide-react";
 import { useState } from "react";
 import AddProduct from "../components/AddProduct";
+import Footer from "@/components/Footer";
+import ViewProduct from "../components/ViewProduct";
+import OrdersProduct from "../components/OrdersProduct";
 
 export default function AdminPage() {
   const [active, setActive] = useState("AddProduct");
@@ -35,7 +38,7 @@ export default function AdminPage() {
           <p>ADICIONAR PRODUTO</p>
         </div>
         <div
-          onClick={() => setActive("AddProduct")}
+          onClick={() => setActive("ViewProduct")}
           className={`flex items-center justify-center gap-2 bg-[#424242] w-[225px] py-8 rounded-md cursor-pointer ${
             active === "Minha Conta" ? "bg-[#2c2c2c]" : ""
           }`}
@@ -44,7 +47,7 @@ export default function AdminPage() {
           <p>LISTA PRODUTO</p>
         </div>
         <div
-          onClick={() => setActive("AddProduct")}
+          onClick={() => setActive("OrdersProduct")}
           className={`flex items-center justify-center gap-2 bg-[#424242] w-[225px] py-8 rounded-md cursor-pointer ${
             active === "Minha Conta" ? "bg-[#2c2c2c]" : ""
           }`}
@@ -58,11 +61,16 @@ export default function AdminPage() {
         switch (active) {
           case "AddProduct":
             return <AddProduct />;
+          case "ViewProduct":
+            return <ViewProduct />;
+          case "OrdersProduct":
+            return <OrdersProduct />;
 
           default:
             return <AddProduct />;
         }
       })()}
+      <Footer />
     </>
   );
 }
