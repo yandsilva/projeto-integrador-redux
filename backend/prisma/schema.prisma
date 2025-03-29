@@ -19,13 +19,15 @@ datasource db {
 // }
 
 model User {
-  id        String    @id @default(uuid())
-  name      String
-  email     String    @unique
-  password  String
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  Address   Address[]
+  id                String    @id @default(uuid())
+  name              String
+  email             String    @unique
+  password          String
+  resetToken        String?
+  resetTokenExpires DateTime?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  Address           Address[]
 
   @@map("users")
 }

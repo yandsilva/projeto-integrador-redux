@@ -20,12 +20,12 @@ export default function Login() {
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm({
     mode: "all",
     resolver: zodResolver(schema),
     defaultValues: {
-      email: "yan@gmail.com",
+      email: "saogamestv@gmail.com",
       password: "12345678",
     },
   });
@@ -105,10 +105,10 @@ export default function Login() {
               Esqueceu sua senha?
             </Link>
             <button
-              // disabled={isSubmitting || loading}
+              disabled={loading}
               className="bg-[#26bbff] h-12 rounded-md text-black font-medium hover:bg-[#61ccff] transition"
             >
-              {isSubmitting ? "Enviando..." : "Entrar"}
+              {loading ? "Enviando..." : "Entrar"}
             </button>
 
             <div className="flex items-center justify-center">

@@ -2,6 +2,8 @@ import { Request, Response } from "express";
 import prismaClient from "../prisma";
 import bcrypt from "bcrypt";
 import generateToken from "../utilis/generateToken";
+import { generateResetToken, resetPassword } from "../services/tokenService";
+import { sendPasswordResetEmail } from "../utilis/sendEmail";
 
 export const signup = async (req: Request, res: Response): Promise<any> => {
   try {
@@ -137,6 +139,42 @@ export const getMe = async (req: Request, res: Response): Promise<any> => {
     });
   } catch (error) {
     console.log("Error in getMe controller", error.message);
+    res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+};
+export const requestPasswordReset = async (req: Request, res: Response) => {
+  try {
+    const { email } = req.body;
+    const token = await generateResetToken(email);
+    await sendPasswordResetEmail(email, token);
+    res.status(200).json({
+      success: true,
+      message: "Password reset email sent",
+    });
+  } catch (error) {
+    console.log("Error in requestPasswordReset controller", error.message);
+    res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+};
+export const handlePasswordReset = async (req: Request, res: Response) => {
+  try {
+    const { token } = req.params;
+    const { newPassword } = req.body;
+    console.log("newPassword", token, newPassword);
+
+    await resetPassword(token, newPassword);
+    res.status(200).json({
+      success: true,
+      message: "Password reset successful",
+    });
+  } catch (error) {
+    console.log("Error in handlePasswordReset controller", error.message);
     res.status(500).json({
       success: false,
       message: "Internal server error",
