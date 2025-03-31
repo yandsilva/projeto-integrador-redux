@@ -1,0 +1,32 @@
+@import "tailwindcss";
+
+body {
+  background-color: #151515;
+  font-family: "Outfit", serif;
+}
+
+::-webkit-scrollbar {
+  width: 15px;
+}
+::-webkit-scrollbar-track {
+  background: #d1e5ff;
+}
+::-webkit-scrollbar-thumb {
+  background: #e90313;
+  border-radius: 7px;
+}
+
+.avatar-update-btn::file-selector-button {
+  width: 100%;
+  padding: 7px;
+  font-weight: 600;
+  border-radius: 8px;
+  border: 1px solid #e90313;
+  background: #e90313;
+  cursor: pointer;
+  color: #fff;
+}
+.avatar-update-btn::file-selector-button:hover {
+  background: transparent;
+  color: #e90313;
+}

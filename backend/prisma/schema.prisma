@@ -1,0 +1,111 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:db.sqlite"
+}
+
+// datasource db {
+//   provider = "postgresql"
+//   url      = env("DATABASE_URL")
+// }
+
+model User {
+  id                String    @id @default(uuid())
+  name              String
+  email             String    @unique
+  password          String
+  resetToken        String?
+  resetTokenExpires DateTime?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  Address           Address[]
+  Cart              Cart[]
+
+  @@map("users")
+}
+
+model Address {
+  id           String   @id @default(uuid())
+  zip          String
+  street       String
+  number       String
+  city         String
+  state        String
+  neighborhood String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId       String
+
+  @@map("addresses")
+}
+
+model Product {
+  id          String   @id @default(uuid())
+  name        String
+  description String
+  mark        String
+  price       String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  images      Image[]
+  category    Category @relation(fields: [categoryId], references: [id])
+  categoryId  String
+  Cart        Cart?    @relation(fields: [cartId], references: [id])
+  cartId      String?
+
+  @@map("products")
+}
+
+model Image {
+  id        String  @id @default(uuid())
+  path      String
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@map("images")
+}
+
+model Category {
+  id        String    @id @default(uuid())
+  name      String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  products  Product[]
+
+  @@map("categories")
+}
+
+model BestShipping {
+  id     String @id @default(uuid())
+  height String
+  width  String
+  length String
+  weight String
+
+  @@map("best_shippings")
+}
+
+model Cart {
+  id         String   @id @default(uuid())
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  totalPrice String
+  totalItems String
+  quantity   Int      @default(1)
+
+  userId   String
+  user     User      @relation(fields: [userId], references: [id])
+  products Product[]
+
+  @@map("carts")
+}
