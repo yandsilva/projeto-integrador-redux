@@ -81,7 +81,11 @@ export const GetCart = async (req: Request, res: Response): Promise<any> => {
       include: {
         CartItems: {
           include: {
-            product: true,
+            product: {
+              include: {
+                images: true,
+              },
+            },
           },
         },
       },

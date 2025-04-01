@@ -14,6 +14,7 @@ import ForgotPassword from "./components/ForgotPassword";
 import ResetPassword from "./components/ResetPassword";
 import Product from "./pages/Product";
 import CartPage from "./pages/CartPage";
+import { getAllCartItems } from "./store/slice/cartItemsSlice";
 
 function App() {
   const dispatch = useDispatch();
@@ -22,6 +23,7 @@ function App() {
     dispatch(getUser());
     dispatch(getAllAddress());
     dispatch(getAllProduct());
+    dispatch(getAllCartItems());
   }, []);
   return (
     <>

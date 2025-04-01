@@ -43,9 +43,11 @@ export const getAllCartItems = () => async (dispatch) => {
         withCredentials: true,
       }
     );
-    console.log(data);
 
-    dispatch(cartItemsSlice.actions.getAllCartItemsSuccess(data.cartItems));
+    dispatch(
+      cartItemsSlice.actions.getAllCartItemsSuccess(data.cart.CartItems)
+    );
+    console.log(data.cart.CartItems);
     dispatch(cartItemsSlice.actions.clearAllErrors());
   } catch (error) {
     dispatch(

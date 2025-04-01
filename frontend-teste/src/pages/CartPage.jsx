@@ -1,4 +1,4 @@
-import CartItems from "../components/CartItems";
+import CartItemsDisplay from "../components/CartItemsDisplay";
 import NavbarCart from "../components/NavbarCart";
 import { ChevronLeft, ShoppingCart } from "lucide-react";
 
@@ -19,7 +19,7 @@ export default function CartPage() {
           <p className="text-3xl">MEU CARRINHO</p>
         </div>
         <div className="flex gap-5">
-          <CartItems />
+          <CartItemsDisplay />
           <div className="bg-white flex-1">asdfadfasdf</div>
         </div>
       </div>
