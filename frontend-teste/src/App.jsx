@@ -13,6 +13,7 @@ import AdminPage from "./pages/AdminPage";
 import ForgotPassword from "./components/ForgotPassword";
 import ResetPassword from "./components/ResetPassword";
 import Product from "./pages/Product";
+import CartPage from "./pages/CartPage";
 
 function App() {
   const dispatch = useDispatch();
@@ -33,6 +34,7 @@ function App() {
         <Route path="/password/reset/:token" element={<ResetPassword />} />
         <Route path="/admin" element={<AdminPage />} />
         <Route path="/product/:productId" element={<Product />} />
+        <Route path="/cart" element={<CartPage />} />
       </Routes>
       <ToastContainer position="bottom-right" theme="dark" />
     </>

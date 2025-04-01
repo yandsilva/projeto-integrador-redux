@@ -61,14 +61,17 @@ export default function Navbar() {
               <p className="text-xs font-semibold">CLARO</p>
             </div>
           </div>
-          <div className="flex items-center bg-[#009E2A] py-3 px-4 rounded-md text-white ml-2 gap-2">
+          <a
+            href="/cart"
+            className="flex items-center bg-[#009E2A] hover:bg-[#006E1D]  cursor-pointer py-3 px-4 rounded-md text-white ml-2 gap-2"
+          >
             <ShoppingCart />
             <div className="flex flex-col">
               <p className="font-semibold text-lg">CARRINHO</p>
               <p className="text-xs text-end">0 produtos</p>
             </div>
             <ChevronDown />
-          </div>
+          </a>
         </div>
       </div>
 
