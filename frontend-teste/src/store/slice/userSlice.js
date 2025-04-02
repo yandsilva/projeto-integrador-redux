@@ -152,7 +152,7 @@ export const login = (email, password) => async (dispatch) => {
         headers: {
           "Content-Type": "application/json",
         },
-      }
+      },
     );
     dispatch(userSlice.actions.loginSuccess(data.user));
     dispatch(userSlice.actions.clearAllErrors());
@@ -172,7 +172,7 @@ export const createAccount = (name, email, password) => async (dispatch) => {
         headers: {
           "Content-Type": "application/json",
         },
-      }
+      },
     );
     dispatch(userSlice.actions.registerSuccess(data.user));
     dispatch(userSlice.actions.clearAllErrors());
@@ -188,7 +188,7 @@ export const getUser = () => async (dispatch) => {
       withCredentials: true,
     });
 
-    dispatch(userSlice.actions.loadUserSuccess(data.user));
+    dispatch(userSlice.actions.loadUserSuccess(data));
     dispatch(userSlice.actions.clearAllErrors());
   } catch (error) {
     dispatch(userSlice.actions.loadFailed(error.response.data.message));
@@ -202,7 +202,7 @@ export const logout = () => async (dispatch) => {
       "http://localhost:8000/api/v1/user/logout",
       {
         withCredentials: true,
-      }
+      },
     );
     dispatch(userSlice.actions.logoutSuccess(data.message));
     dispatch(userSlice.actions.clearAllErrors());

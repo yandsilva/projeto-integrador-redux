@@ -13,17 +13,28 @@ import {
   clearAllProductSliceErrors,
   resetProductSlice,
 } from "../store/slice/productSlice";
+import { addItemToCart } from "../store/slice/cartItemsSlice";
 
 export default function Product() {
   const { productId } = useParams();
   const [favorite, setFavorite] = useState(false);
+  const [userId, setUserId] = useState(null);
+  const [productCart, setProductCart] = useState(null);
   const { product, error, loading, message } = useSelector(
-    (state) => state.product
+    (state) => state.product,
   );
+  const { user } = useSelector((state) => state.user);
   const dispatch = useDispatch();
 
   const productData = product.find((item) => item.id === productId);
-  console.log(productData);
+
+  const handleAddToCart = () => {
+    dispatch(addItemToCart(productId, userId));
+  };
+
+  useEffect(() => {
+    setUserId(user.id);
+  }, [user]);
 
   useEffect(() => {
     if (error) {
@@ -38,35 +49,20 @@ export default function Product() {
   return productData ? (
     <div>
       <Navbar />
-      <div className="border-t-2 pt-10 transition-opacity ease-in duration-500 opacity-100">
+      <div className="border-t-2 pt-10 opacity-100 transition-opacity duration-500 ease-in">
         {/* Product Data */}
-        <div className="flex gap-12 sm:gap-7 flex-col sm:flex-row">
+        <div className="flex flex-col gap-12 sm:flex-row sm:gap-7">
           {/* Product Images */}
-          <div className="flex-1 flex flex-col-reverse sm:flex-row">
-            {/* flex sm:flex-col overflow-x-auto sm:overflow-y-scroll justify-between sm:justify-normal items-center sm:w-[10%] w-full */}
-            {/* <div className="flex sm:flex-col overflow-x-auto gap-y-2 justify-between sm:justify-normal items-center sm:w-[35%] w-full">
-              {productData.map((item) => (
-                <div
-                  key={item.id}
-                  className="w-24 h-24 sm:w-28 sm:h-28 flex-shrink-0 cursor-pointer bg-white p-2 rounded-md overflow-hidden"
-                >
-                  <img
-                    src={`http://localhost:8000/images/${item.images[0].path}`}
-                    alt=""
-                    className="w-full h-full object-cover rounded-md"
-                  />
-                </div>
-              ))}
-            </div> */}
+          <div className="flex flex-1 flex-col-reverse sm:flex-row">
             <div className="relative">
               <img
-                className="w-[600px] h-[550px] bg-white object-contain p-2 rounded-md"
+                className="h-[550px] w-[600px] rounded-md bg-white object-contain p-2"
                 src={`http://localhost:8000/images/${productData.images[0].path}`}
                 alt=""
               />
 
               <button
-                className="flex items-center justify-center absolute right-2 top-2 rounded-full border border-gray-400 p-2 w-fit"
+                className="absolute top-2 right-2 flex w-fit items-center justify-center rounded-full border border-gray-400 p-2"
                 onClick={() => setFavorite(!favorite)}
               >
                 {!favorite ? (
@@ -80,64 +76,67 @@ export default function Product() {
 
           {/* Product Info */}
 
-          <div className="flex-1 mr-4 text-white">
+          <div className="mr-4 flex-1 text-white">
             {/* Product Info */}
             <div>
-              <h1 className="font-normal text-3xl mb-2">
+              <h1 className="mb-2 text-3xl font-normal">
                 {productData.description}
               </h1>
               <div className="mb-5">
                 <div className="flex gap-2">
-                  <p className="font-semibold text-sm">Marca:</p>
-                  <span className="font-light text-sm">Gigabyte</span>
+                  <p className="text-sm font-semibold">Marca:</p>
+                  <span className="text-sm font-light">Gigabyte</span>
                 </div>
               </div>
             </div>
             <div>
-              <div className="border-t-[0.5px] border-[#535353] mb-3"></div>
+              <div className="mb-3 border-t-[0.5px] border-[#535353]"></div>
               <div className="flex items-center justify-between">
-                <div className="text-[#009E2A] font-medium text-sm">
+                <div className="text-sm font-medium text-[#009E2A]">
                   PRODUTO DISPONIVEL
                 </div>
                 <div className="flex gap-2">
-                  <p className="font-semibold text-sm">SKU:</p>
-                  <span className="font-light text-sm">MCR-RX5700-STK</span>
+                  <p className="text-sm font-semibold">SKU:</p>
+                  <span className="text-sm font-light">MCR-RX5700-STK</span>
                 </div>
               </div>
-              <div className="border-t-[0.5px] border-[#535353] mt-3"></div>
+              <div className="mt-3 border-t-[0.5px] border-[#535353]"></div>
             </div>
 
             {/* Price */}
             <div>
-              <div className="flex items-center gap-4 mt-10">
+              <div className="mt-10 flex items-center gap-4">
                 <RiMoneyDollarBoxLine size={40} color="#009E2A" />
                 <div className="flex flex-col gap-1">
-                  <p className="text-[#009E2A] font-light text-xs">à vista</p>
-                  <p className="text-[#009E2A] font-semibold text-3xl">
+                  <p className="text-xs font-light text-[#009E2A]">à vista</p>
+                  <p className="text-3xl font-semibold text-[#009E2A]">
                     R$ {productData.price}
                   </p>
-                  <p className="font-light text-xs">no PIX com 15% desconto</p>
+                  <p className="text-xs font-light">no PIX com 15% desconto</p>
                 </div>
               </div>
-              <div className="border border-[#ff1515] w-10 my-4"></div>
+              <div className="my-4 w-10 border border-[#ff1515]"></div>
               <div className="flex items-center gap-4">
                 <IoMdCard size={40} color="#ff1515" />
                 <div className="flex flex-col gap-1">
-                  <p className="text-[#ff1515] font-semibold text-3xl">
+                  <p className="text-3xl font-semibold text-[#ff1515]">
                     R$ {productData.price}
                   </p>
-                  <p className="font-light text-sm">
+                  <p className="text-sm font-light">
                     em até <span className="text-[#ff1515]">12x</span> de{" "}
                     <span className="text-[#ff1515]">
                       R${productData.price}
                     </span>
                   </p>
-                  <p className="font-light text-sm">sem juros no cartão</p>
+                  <p className="text-sm font-light">sem juros no cartão</p>
                 </div>
               </div>
 
               {/* Cart  */}
-              <button className="flex items-center justify-center w-full h-20 rounded-md gap-2 bg-[#009E2A] hover:bg-[#006E1D] duration-300 my-10">
+              <button
+                onClick={handleAddToCart}
+                className="my-10 flex h-20 w-full items-center justify-center gap-2 rounded-md bg-[#009E2A] duration-300 hover:bg-[#006E1D]"
+              >
                 <LiaCartPlusSolid size={55} />
                 <div>
                   <p className="text-3xl font-bold">COMPRAR</p>
@@ -150,13 +149,13 @@ export default function Product() {
 
         {/* About */}
 
-        <div className="flex flex-col justify-center gap-28 text-white my-20">
-          <div className="text-white flex flex-col items-center gap-4">
-            <div className="border border-[#ff1515] w-20 my-4"></div>
+        <div className="my-20 flex flex-col justify-center gap-28 text-white">
+          <div className="flex flex-col items-center gap-4 text-white">
+            <div className="my-4 w-20 border border-[#ff1515]"></div>
             <p className="text-xl">SOBRE</p>
           </div>
-          <div className="flex gap-10 mx-10">
-            <div className="flex-1 flex flex-col justify-center gap-4">
+          <div className="mx-10 flex gap-10">
+            <div className="flex flex-1 flex-col justify-center gap-4">
               <p className="text-2xl font-semibold">
                 PLACA DE VÍDEO MANCER RX 5700 8GB
               </p>
@@ -169,7 +168,7 @@ export default function Product() {
             </div>
             <div className="flex-1">
               <img
-                className="w-[600px] h-[550px] bg-white object-contain p-2 rounded-md"
+                className="h-[550px] w-[600px] rounded-md bg-white object-contain p-2"
                 src={`http://localhost:8000/images/${productData.images[0].path}`}
                 alt=""
               />
@@ -178,43 +177,43 @@ export default function Product() {
         </div>
 
         {/* Addtional Infomation */}
-        <div className="mb-44 mx-10 text-white">
-          <div className="text-white flex flex-col items-center gap-4">
-            <div className="border border-[#ff1515] w-24 my-4"></div>
+        <div className="mx-10 mb-44 text-white">
+          <div className="flex flex-col items-center gap-4 text-white">
+            <div className="my-4 w-24 border border-[#ff1515]"></div>
             <p className="text-xl">INFORMAÇÕES ADICIONAIS</p>
           </div>
 
           <div>
             <div className="flex flex-col gap-2">
-              <div className="flex ">
+              <div className="flex">
                 <p className="flex-1 font-semibold">Marca:</p>
                 <span className="flex-1 font-light">Mancer</span>
               </div>
-              <div className="border-t-[0.5px] border-[#535353] mb-2"></div>
+              <div className="mb-2 border-t-[0.5px] border-[#535353]"></div>
             </div>
 
             <div className="flex flex-col gap-2">
-              <div className="flex ">
+              <div className="flex">
                 <p className="flex-1 font-semibold">Modelo:</p>
                 <span className="flex-1 font-light">MCR-RX5700-STK</span>
               </div>
-              <div className="border-t-[0.5px] border-[#535353] mb-2"></div>
+              <div className="mb-2 border-t-[0.5px] border-[#535353]"></div>
             </div>
 
             <div className="flex flex-col gap-2">
-              <div className="flex ">
+              <div className="flex">
                 <p className="flex-1 font-semibold">GPU:</p>
                 <span className="flex-1 font-light">AMD Radeon RX 5700</span>
               </div>
-              <div className="border-t-[0.5px] border-[#535353] mb-2"></div>
+              <div className="mb-2 border-t-[0.5px] border-[#535353]"></div>
             </div>
 
             <div className="flex flex-col gap-2">
-              <div className="flex ">
+              <div className="flex">
                 <p className="flex-1 font-semibold">Interface:</p>
                 <span className="flex-1 font-light">PCI Express x 16 4.0</span>
               </div>
-              <div className="border-t-[0.5px] border-[#535353] mb-2"></div>
+              <div className="mb-2 border-t-[0.5px] border-[#535353]"></div>
             </div>
           </div>
         </div>

@@ -20,12 +20,9 @@ export default function CartItems({
           <p>{description}</p>
         </div>
       </div>
-      <div className="flex items-center">Qtdd</div>
-      <div className="flex items-center">Preço à Vista no PIX</div>
-      <div
-        className="flex items-center cursor-pointer hover:bg-white/10 
-            transition-all rounded-full p-3"
-      >
+      <div className="flex items-center">{price}</div>
+      <div className="flex items-center">{price}</div>
+      <div className="flex cursor-pointer items-center rounded-full p-3 transition-all hover:bg-white/10">
         <Trash2 />
       </div>
     </>

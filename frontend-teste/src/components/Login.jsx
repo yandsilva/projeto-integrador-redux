@@ -30,7 +30,7 @@ export default function Login() {
     },
   });
   const { loading, error, isAuthenticated } = useSelector(
-    (state) => state.user
+    (state) => state.user,
   );
 
   const dispatch = useDispatch();
@@ -39,7 +39,6 @@ export default function Login() {
 
   const handleLogin = (data) => {
     dispatch(login(data.email, data.password));
-    console.log(data);
   };
 
   useEffect(() => {
@@ -54,33 +53,33 @@ export default function Login() {
 
   return (
     <>
-      <div className="flex text-white bg-[#101014] h-screen">
+      <div className="flex h-screen bg-[#101014] text-white">
         {/* IMAGEM */}
-        <div className="lg:flex flex-1 items-center justify-center hidden ">
+        <div className="hidden flex-1 items-center justify-center lg:flex">
           <img src={banner_account} alt="" />
         </div>
 
         {/* FORMULARIO */}
         <form
           onSubmit={handleSubmit(handleLogin)}
-          className="flex flex-col flex-1 items-center justify-center relative rounded-3xl border border-gray-500 bg-[#202025] mx-10 sm:mx-32 lg:mx-4 my-10"
+          className="relative mx-10 my-10 flex flex-1 flex-col items-center justify-center rounded-3xl border border-gray-500 bg-[#202025] sm:mx-32 lg:mx-4"
         >
           <a
             href="/"
-            className="flex items-center gap-2 border px-2 py-1 rounded-lg absolute top-3 left-3"
+            className="absolute top-3 left-3 flex items-center gap-2 rounded-lg border px-2 py-1"
           >
             <MoveLeft size={20} />
             <p>Inicio</p>
           </a>
-          <div className="flex flex-col gap-2 mb-7">
+          <div className="mb-7 flex flex-col gap-2">
             <h2 className="text-5xl">Entrar</h2>
           </div>
-          <div className="flex flex-col gap-3 w-[65%]">
+          <div className="flex w-[65%] flex-col gap-3">
             <div className="flex flex-col">
-              <label className="text-gray-300 mb-1">Endereço de E-mail</label>
+              <label className="mb-1 text-gray-300">Endereço de E-mail</label>
               <input
                 {...register("email")}
-                className="p-3 h-12 rounded-md border border-gray-500 bg-[#242428]"
+                className="h-12 rounded-md border border-gray-500 bg-[#242428] p-3"
                 type="email"
               />
               {errors.email?.message && (
@@ -88,10 +87,10 @@ export default function Login() {
               )}
             </div>
             <div className="flex flex-col">
-              <label className="text-gray-300 mb-1">Senha</label>
+              <label className="mb-1 text-gray-300">Senha</label>
               <input
                 {...register("password")}
-                className="p-3 h-12 rounded-md border border-gray-500 bg-[#242428]"
+                className="h-12 rounded-md border border-gray-500 bg-[#242428] p-3"
                 type="password"
               />
               {errors.password?.message && (
@@ -100,30 +99,30 @@ export default function Login() {
             </div>
             <Link
               to="/password/forgot"
-              className="text-blue-400 mb-3 underline text-end"
+              className="mb-3 text-end text-blue-400 underline"
             >
               Esqueceu sua senha?
             </Link>
             <button
               disabled={loading}
-              className="bg-[#26bbff] h-12 rounded-md text-black font-medium hover:bg-[#61ccff] transition"
+              className="h-12 rounded-md bg-[#26bbff] font-medium text-black transition hover:bg-[#61ccff]"
             >
               {loading ? "Enviando..." : "Entrar"}
             </button>
 
             <div className="flex items-center justify-center">
-              <div className="w-full h-0.5 bg-gray-400"></div>
+              <div className="h-0.5 w-full bg-gray-400"></div>
               <p className="w-[150%] text-center text-gray-400">
                 ou faça login com
               </p>
-              <div className="w-full h-0.5 bg-gray-400"></div>
+              <div className="h-0.5 w-full bg-gray-400"></div>
             </div>
-            <button className=" flex items-center justify-center gap-3 p-3 h-12 rounded-md border border-gray-500">
+            <button className="flex h-12 items-center justify-center gap-3 rounded-md border border-gray-500 p-3">
               <FcGoogle size={30} />
-              <div className="text-white ">Google</div>
+              <div className="text-white">Google</div>
             </button>
           </div>
-          <Link className="text-blue-400 mb-3 underline mt-10" to="/signup">
+          <Link className="mt-10 mb-3 text-blue-400 underline" to="/signup">
             Criar Conta
           </Link>
         </form>
