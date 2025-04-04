@@ -15,7 +15,6 @@ export const AddToCart = async (req: Request, res: Response): Promise<void> => {
   const { userId, productId } = req.body as AddToCartRequestBody;
 
   try {
-    // Validar productId
     const product = await prismaClient.product.findUnique({
       where: { id: productId },
     });
@@ -37,15 +36,13 @@ export const AddToCart = async (req: Request, res: Response): Promise<void> => {
     });
 
     if (!cart) {
-      // Criar novo carrinho com primeiro item
       const newCart = await prismaClient.cart.create({
         data: {
           user: { connect: { id: userId } },
-          totalPrice: "0", // Valor temporário
+          totalPrice: "0",
         },
       });
 
-      // Adicionar item ao carrinho
       await prismaClient.cartItems.create({
         data: {
           cartId: newCart.id,
@@ -55,22 +52,18 @@ export const AddToCart = async (req: Request, res: Response): Promise<void> => {
         },
       });
 
-      // Atualizar preço total
       cart = await updateCartTotal(newCart.id);
     } else {
-      // Verificar se o produto já está no carrinho
       const existingItem = cart.CartItems.find(
         (item) => item.productId === productId
       );
 
       if (existingItem) {
-        // Incrementar quantidade
         await prismaClient.cartItems.update({
           where: { id: existingItem.id },
           data: { quantity: { increment: 1 } },
         });
       } else {
-        // Adicionar novo item
         await prismaClient.cartItems.create({
           data: {
             cartId: cart.id,
@@ -81,7 +74,6 @@ export const AddToCart = async (req: Request, res: Response): Promise<void> => {
         });
       }
 
-      // Atualizar preço total
       cart = await updateCartTotal(cart.id);
     }
 
@@ -96,7 +88,6 @@ export const AddToCart = async (req: Request, res: Response): Promise<void> => {
   }
 };
 
-// Função auxiliar para calcular e atualizar o total do carrinho
 async function updateCartTotal(cartId: string): Promise<CartWithItems> {
   const cartItems = await prismaClient.cartItems.findMany({
     where: { cartId },
