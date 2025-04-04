@@ -77,13 +77,13 @@ export const getAllProduct = () => async (dispatch) => {
   try {
     const { data } = await axios.get(
       "http://localhost:8000/api/v1/product/getall",
-      { withCredentials: true }
+      { withCredentials: true },
     );
     dispatch(productSlice.actions.getAllProductsSuccess(data.products));
     dispatch(productSlice.actions.clearAllErrors());
   } catch (error) {
     dispatch(
-      productSlice.actions.getAllProductsFailed(error.response.data.message)
+      productSlice.actions.getAllProductsFailed(error.response.data.message),
     );
   }
 };
@@ -99,13 +99,14 @@ export const addNewProduct = (data) => async (dispatch) => {
         headers: {
           "Content-Type": "multipart/form-data",
         },
-      }
+      },
     );
+
     dispatch(productSlice.actions.addNewProductSuccess(response.data.message));
     dispatch(productSlice.actions.clearAllErrors());
   } catch (error) {
     dispatch(
-      productSlice.actions.addNewProductFailed(error.response.data.message)
+      productSlice.actions.addNewProductFailed(error.response.data.message),
     );
   }
 };
@@ -117,13 +118,13 @@ export const deleteProduct = (id) => async (dispatch) => {
       `http://localhost:8000/api/v1/product/delete/${id}`,
       {
         withCredentials: true,
-      }
+      },
     );
     dispatch(productSlice.actions.deleteProductSuccess(data.message));
     dispatch(productSlice.actions.clearAllErrors());
   } catch (error) {
     dispatch(
-      productSlice.actions.deleteProductFailed(error.response.data.message)
+      productSlice.actions.deleteProductFailed(error.response.data.message),
     );
   }
 };

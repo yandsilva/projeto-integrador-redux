@@ -1,37 +1,91 @@
 import { Request, Response } from "express";
+import { Cart, CartItems, Product } from "@prisma/client";
 import prismaClient from "../prisma";
 
-export const AddToCart = async (req: Request, res: Response): Promise<any> => {
-  const { userId, productId } = req.body;
+interface AddToCartRequestBody {
+  userId: string;
+  productId: string;
+}
+
+interface CartWithItems extends Cart {
+  CartItems: (CartItems & { product: Product })[];
+}
+
+export const AddToCart = async (req: Request, res: Response): Promise<void> => {
+  const { userId, productId } = req.body as AddToCartRequestBody;
+
   try {
-    const existingCart = await prismaClient.cart.findFirst({
-      where: { userId: userId },
+    // Validar productId
+    const product = await prismaClient.product.findUnique({
+      where: { id: productId },
     });
 
-    if (existingCart) {
-      throw new Error("Cart already exists for the user");
+    if (!product) {
+      res.status(404).json({ error: "Product not found" });
+      return;
     }
 
-    const cart = await prismaClient.cart.create({
-      data: {
-        user: { connect: { id: userId } },
-      },
+    let cart: CartWithItems | null = await prismaClient.cart.findFirst({
+      where: { userId },
       include: {
-        CartItems: true,
+        CartItems: {
+          include: {
+            product: true,
+          },
+        },
       },
     });
 
-    if (cart) {
-      await prismaClient.cartItems.create({
+    if (!cart) {
+      // Criar novo carrinho com primeiro item
+      const newCart = await prismaClient.cart.create({
         data: {
-          cart: { connect: { id: cart.id } },
-          product: { connect: { id: productId } },
-          quantity: 1,
+          user: { connect: { id: userId } },
+          totalPrice: "0", // Valor temporário
         },
       });
+
+      // Adicionar item ao carrinho
+      await prismaClient.cartItems.create({
+        data: {
+          cartId: newCart.id,
+          productId,
+          quantity: 1,
+          price: product.price,
+        },
+      });
+
+      // Atualizar preço total
+      cart = await updateCartTotal(newCart.id);
+    } else {
+      // Verificar se o produto já está no carrinho
+      const existingItem = cart.CartItems.find(
+        (item) => item.productId === productId
+      );
+
+      if (existingItem) {
+        // Incrementar quantidade
+        await prismaClient.cartItems.update({
+          where: { id: existingItem.id },
+          data: { quantity: { increment: 1 } },
+        });
+      } else {
+        // Adicionar novo item
+        await prismaClient.cartItems.create({
+          data: {
+            cartId: cart.id,
+            productId,
+            quantity: 1,
+            price: product.price,
+          },
+        });
+      }
+
+      // Atualizar preço total
+      cart = await updateCartTotal(cart.id);
     }
 
-    return res.status(201).json({
+    res.status(201).json({
       message: "Product added to cart successfully",
       success: true,
       cart,
@@ -41,38 +95,35 @@ export const AddToCart = async (req: Request, res: Response): Promise<any> => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
-export const AddToCartItems = async (
-  req: Request,
-  res: Response
-): Promise<any> => {
-  const { cartId, productId } = req.body;
-  try {
-    const existingCart = await prismaClient.cartItems.findFirst({
-      where: { productId: productId },
-    });
 
-    if (existingCart) {
-      throw new Error("Cart already exists for the user");
-    }
+// Função auxiliar para calcular e atualizar o total do carrinho
+async function updateCartTotal(cartId: string): Promise<CartWithItems> {
+  const cartItems = await prismaClient.cartItems.findMany({
+    where: { cartId },
+    include: { product: true },
+  });
 
-    const cart = await prismaClient.cartItems.create({
-      data: {
-        cart: { connect: { id: cartId } },
-        product: { connect: { id: productId } },
-        quantity: 1,
+  const total = cartItems.reduce((sum, item) => {
+    return sum + parseFloat(item.price) * item.quantity;
+  }, 0);
+
+  const updatedCart = await prismaClient.cart.update({
+    where: { id: cartId },
+    data: {
+      totalPrice: total.toFixed(2),
+      updatedAt: new Date(),
+    },
+    include: {
+      CartItems: {
+        include: {
+          product: true,
+        },
       },
-    });
-    return res.status(201).json({
-      message: "Product added to cart successfully",
-      success: true,
-      cart,
-    });
-  } catch (error) {
-    console.error("Error in AddToCart:", error);
-    res.status(500).json({ error: "Internal Server Error" });
-  }
-};
+    },
+  });
 
+  return updatedCart as CartWithItems;
+}
 export const GetCart = async (req: Request, res: Response): Promise<any> => {
   const { userId } = req.body;
   try {

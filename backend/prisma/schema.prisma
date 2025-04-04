@@ -95,10 +95,10 @@ model BestShipping {
 }
 
 model Cart {
-  id        String   @id @default(uuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  quantity  Int      @default(1)
+  id         String   @id @default(uuid())
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  totalPrice String   @map("total_price")
 
   userId String
   user   User   @relation(fields: [userId], references: [id])
@@ -109,12 +109,17 @@ model Cart {
 }
 
 model CartItems {
-  id        String  @id @default(uuid())
-  cartId    String
+  id    String @id @default(uuid())
+  price String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  quantity  Int      @default(1)
+
   cart      Cart    @relation(fields: [cartId], references: [id])
-  productId String
+  cartId    String
   product   Product @relation(fields: [productId], references: [id])
-  quantity  Int     @default(1)
+  productId String
 
   @@map("cart_items")
 }

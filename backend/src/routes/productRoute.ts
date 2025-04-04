@@ -19,7 +19,7 @@ productRouter.post(
   uploads.array("images", 5),
   addNewProduct
 );
-productRouter.get("/getall", authenticated, getAllProduct);
+productRouter.get("/getall", getAllProduct);
 productRouter.delete("/delete/:id", authenticated, deleteProduct);
 
 export default productRouter;

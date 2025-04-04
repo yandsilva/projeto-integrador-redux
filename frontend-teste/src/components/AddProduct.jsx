@@ -36,7 +36,7 @@ export default function AddProduct() {
     const fetchCategories = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:8000/api/v1/category/getall"
+          "http://localhost:8000/api/v1/category/getall",
         );
         setCategories(response.data.categories);
       } catch (error) {
@@ -59,15 +59,15 @@ export default function AddProduct() {
 
   return (
     <form onSubmit={handleSubmit}>
-      <div className="flex flex-col gap-10 mt-16 mb-20">
-        <div className="flex flex-col gap-10 justify-center items-center">
+      <div className="mt-16 mb-20 flex flex-col gap-10">
+        <div className="flex flex-col items-center justify-center gap-10">
           <label className="text-sm font-medium text-white">
             IMAGEM DO PRODUTO
           </label>
           <img
             src={image ? URL.createObjectURL(image) : `./vite.svg`}
             alt="avatar"
-            className="w-full h-auto sm:w-72 sm:h-72 rounded-2xl"
+            className="h-auto w-full rounded-2xl sm:h-72 sm:w-72"
           />
           <input
             accept="image/*"
@@ -78,14 +78,14 @@ export default function AddProduct() {
           />
         </div>
 
-        <div className="w-[40%] m-auto">
+        <div className="m-auto w-[40%]">
           <div className="flex flex-col">
-            <label className="text-xl text-white font-medium">
+            <label className="text-xl font-medium text-white">
               Nome do Produto
             </label>
-            <div className="flex items-center w-full justify-center bg-[#424242] rounded-sm">
+            <div className="flex w-full items-center justify-center rounded-sm bg-[#424242]">
               <input
-                className="bg-transparent p-3 w-full text-white outline-none"
+                className="w-full bg-transparent p-3 text-white outline-none"
                 type="text"
                 placeholder="Nome do Produto"
                 value={name}
@@ -94,11 +94,11 @@ export default function AddProduct() {
             </div>
           </div>
           <div className="flex flex-col">
-            <label className="text-xl text-white font-medium">Categorias</label>
+            <label className="text-xl font-medium text-white">Categorias</label>
             <select
               value={categoriesId}
               onChange={(e) => setCategoriesId(e.target.value)}
-              className="bg-[#424242] rounded-sm p-3 text-white outline-none"
+              className="rounded-sm bg-[#424242] p-3 text-white outline-none"
             >
               <option>Selecione uma categoria</option>
               {categories.map((item) => (
@@ -110,10 +110,10 @@ export default function AddProduct() {
           </div>
           <div className="flex justify-between">
             <div className="flex flex-col">
-              <label className="text-xl text-white font-medium">Marca</label>
-              <div className="flex items-center w-full justify-center bg-[#424242] rounded-sm">
+              <label className="text-xl font-medium text-white">Marca</label>
+              <div className="flex w-full items-center justify-center rounded-sm bg-[#424242]">
                 <input
-                  className="bg-transparent p-3 w-full text-white outline-none"
+                  className="w-full bg-transparent p-3 text-white outline-none"
                   type="text"
                   placeholder="Nome do Produto"
                   value={mark}
@@ -122,10 +122,10 @@ export default function AddProduct() {
               </div>
             </div>
             <div>
-              <label className="text-xl text-white font-medium">Preço</label>
-              <div className="flex items-center w-full justify-center bg-[#424242] rounded-sm">
+              <label className="text-xl font-medium text-white">Preço</label>
+              <div className="flex w-full items-center justify-center rounded-sm bg-[#424242]">
                 <input
-                  className="bg-transparent p-3 w-full text-white outline-none"
+                  className="w-full bg-transparent p-3 text-white outline-none"
                   type="number"
                   placeholder="Nome do Produto"
                   value={price}
@@ -135,10 +135,10 @@ export default function AddProduct() {
             </div>
           </div>
           <div>
-            <label className="text-xl text-white font-medium">Descrição</label>
-            <div className="flex items-center w-full justify-center bg-[#424242] rounded-sm">
+            <label className="text-xl font-medium text-white">Descrição</label>
+            <div className="flex w-full items-center justify-center rounded-sm bg-[#424242]">
               <textarea
-                className="bg-transparent p-3 w-full h-28 text-white outline-none"
+                className="h-28 w-full bg-transparent p-3 text-white outline-none"
                 type="text"
                 placeholder="Nome do Produto"
                 value={description}
@@ -148,12 +148,10 @@ export default function AddProduct() {
           </div>
         </div>
       </div>
-      <div className="w-[40%] m-auto mb-20">
+      <div className="m-auto mb-20 w-[40%]">
         <button
           type="submit"
-          className="w-full p-3 bg-[#e90313] rounded-lg text-white
-         font-medium hover:bg-transparent hover:text-[#e90313] border 
-         border-[#e90313]"
+          className="w-full rounded-lg border border-[#e90313] bg-[#e90313] p-3 font-medium text-white hover:bg-transparent hover:text-[#e90313]"
         >
           Adicionar Produto
         </button>
